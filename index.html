@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disease Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;}
+    body { background: #f8f9fb; color: #333; overflow-x: hidden; }
+    header { padding: 50px 20px; text-align: center; background: linear-gradient(135deg, #6C63FF, #3F3D56); color: white;}
+    header h1 { font-size: 3rem; margin-bottom: 20px;}
+    header p { font-size: 1.2rem; max-width: 600px; margin: 0 auto;}
+    .container { max-width: 1000px; background: #ffffff; border-radius: 20px; padding: 40px; margin: 40px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: flex; flex-wrap: wrap; gap: 30px; animation: fadeIn 1s ease-in-out;}
+    .left, .right { flex: 1; min-width: 250px;}
+    .left img { width: 100%; border-radius: 20px; height: auto; }
+    .right h2 { margin-bottom: 15px;}
+    .right p { margin-bottom: 10px; font-size: 0.95rem; line-height: 1.6;}
+    label { font-weight: 600; margin: 10px 0 5px; display: block;}
+    input[type="text"], input[type="number"] { width: 100%; padding: 12px 18px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem;}
+    button { background: #6C63FF; color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1rem; cursor: pointer; display: block; width: 100%; transition: all 0.3s ease;}
+    button:hover { background: #514BC1; transform: translateY(-2px);}
+    .hidden {display: none;}
+    @keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);}}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Disease Prediction System</h1>
+  <p>Enter your details and symptoms to get quick, practical health insights with home remedies and advice.</p>
+</header>
+
+<div id="firstPage" class="container">
+  <div class="left">
+    <img src="https://i.postimg.cc/vZRts7tN/preview.webp" alt="Medical">
+  </div>
+  <div class="right">
+    <h2>Register</h2>
+    <label>Name:</label>
+    <input type="text" id="name" placeholder="John Doe">
+    <label>Contact Number:</label>
+    <input type="text" id="contact" placeholder="9876543210">
+    <label>Age:</label>
+    <input type="number" id="age" placeholder="25">
+    <button onclick="goToSecondPage()">Next</button>
+    <h2>Did you know?</h2>
+    <p>70% of health decisions start with an online search. Early detection improves recovery rates!</p>
+  </div>
+</div>
+
+<div id="secondPage" class="container hidden">
+  <div class="left">
+    <img src="https://i.postimg.cc/9ftkzdPL/image.png" alt="Symptoms">
+  </div>
+  <div class="right">
+    <h2>Your Symptoms</h2>
+    <label>Symptoms (comma separated)</label>
+    <input type="text" id="symptoms" placeholder="fever, cough, headache">
+    <button onclick="predictDisease()">Submit</button>
+    <h2>Useful Health Facts</h2>
+    <p>Even minor symptoms deserve attention — don’t ignore persistent or unusual signs.</p>
+  </div>
+</div>
+
+<div id="thirdPage" class="container hidden">
+  <div class="left">
+    <img src="https://i.postimg.cc/3N3bgd13/Gemini-Generated-Image-ta33lzta33lzta33.jpg" alt="Results">
+  </div>
+  <div class="right">
+    <h2>Results</h2>
+    <div id="result"></div>
+    <button onclick="goToSecondPage(true)">Go Back</button>
+  </div>
+</div>
+
+<script>
+  const diseases = [
+    {
+      symptoms: ['fever', 'cough', 'headache'],
+      disease: 'Seasonal Flu',
+      remedies: 'Rest, fluids, paracetamol.',
+      consult: 'Doctor if symptoms persist over 3 days.'
+    },
+    {
+      symptoms: ['fever', 'joint pain'],
+      disease: 'Chikungunya',
+      remedies: 'Rest, hydration, paracetamol.',
+      consult: 'Doctor if severe pain continues.'
+    },
+    {
+      symptoms: ['vomiting', 'diarrhea'],
+      disease: 'Stomach Infection',
+      remedies: 'ORS, soft diet, probiotics.',
+      consult: 'Doctor if vomiting persists.'
+    },
+    {
+      symptoms: ['rash', 'fever'],
+      disease: 'Dengue Fever',
+      remedies: 'Paracetamol, hydration, rest.',
+      consult: 'Doctor if bleeding or severe pain.'
+    },
+    {
+      symptoms: ['chest pain'],
+      disease: 'Possible Gastric Pain',
+      remedies: 'Antacids, avoid spicy food.',
+      consult: 'Doctor if persists.'
+    },
+    {
+      symptoms: ['high blood pressure'],
+      disease: 'Hypertension',
+      remedies: 'Low salt diet, regular exercise.',
+      consult: 'Routine monitoring recommended.'
+    }
+  ];
+
+  function goToSecondPage(back=false) {
+    document.getElementById('firstPage').classList.add('hidden');
+    document.getElementById('thirdPage').classList.add('hidden');
+    document.getElementById('secondPage').classList.remove('hidden');
+    if (back) document.getElementById('symptoms').focus();
+  }
+
+  function predictDisease() {
+    let input = document.getElementById('symptoms').value.toLowerCase().split(',').map(s => s.trim());
+    let found = false;
+    let resultContent = '';
+
+    for (let entry of diseases) {
+      if (entry.symptoms.every(symptom => input.includes(symptom))) {
+        resultContent = `<p><strong>Disease:</strong> ${entry.disease}</p>
+                         <p><strong>Home Remedies:</strong> ${entry.remedies}</p>
+                         <p><strong>Doctor Advice:</strong> ${entry.consult}</p>
+                         <h3>Thank You!</h3>`;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      resultContent = `<p><strong>Most Likely:</strong> Common Cold / Mild Viral</p>
+                       <p><strong>Remedies:</strong> Warm liquids, paracetamol, rest.</p>
+                       <p><strong>Consult:</strong> If no improvement in 3 days.</p>
+                       <h3>Thank You!</h3>`;
+    }
+
+    document.getElementById('secondPage').classList.add('hidden');
+    document.getElementById('thirdPage').classList.remove('hidden');
+    document.getElementById('result').innerHTML = resultContent;
+  }
+</script>
+
+</body>
+</html>
